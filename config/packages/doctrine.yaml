@@ -1,0 +1,57 @@
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                url: '%env(resolve:DATABASE_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+                default_table_options:
+                    charset: utf8mb4
+                    collate: utf8mb4_unicode_ci
+            bgbilling:
+                url: '%env(resolve:DATABASE_BGBILLING_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+            clickhouse:
+                host: '127.0.0.1'
+                port: 9005
+                user: default
+                password: 'test'
+                dbname: 'test'
+                driver_class: FOD\DBALClickHouse\Driver
+                wrapper_class: FOD\DBALClickHouse\Connection
+                options:
+                    enable_http_compression: 1
+                    max_execution_time: 60
+        types:
+            array(int8): FOD\DBALClickHouse\Types\ArrayInt8Type
+            array(int16): FOD\DBALClickHouse\Types\ArrayInt16Type
+            array(int32): FOD\DBALClickHouse\Types\ArrayInt32Type
+            array(int64): FOD\DBALClickHouse\Types\ArrayInt64Type
+            array(uint8): FOD\DBALClickHouse\Types\ArrayUInt8Type
+            array(uint16): FOD\DBALClickHouse\Types\ArrayUInt16Type
+            array(uint32): FOD\DBALClickHouse\Types\ArrayUInt32Type
+            array(uint64): FOD\DBALClickHouse\Types\ArrayUInt64Type
+            array(float32): FOD\DBALClickHouse\Types\ArrayFloat32Type
+            array(float64): FOD\DBALClickHouse\Types\ArrayFloat64Type
+            array(string): FOD\DBALClickHouse\Types\ArrayStringType
+            array(datetime): FOD\DBALClickHouse\Types\ArrayDateTimeType
+            array(date): FOD\DBALClickHouse\Types\ArrayDateType
+    orm:
+        auto_generate_proxy_classes: true
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: true
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App
