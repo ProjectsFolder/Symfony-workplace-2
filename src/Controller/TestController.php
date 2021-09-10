@@ -6,6 +6,8 @@ use App\Entity\Contract;
 use App\Entity\Tariff;
 use App\Services\BGBilling;
 use App\Services\Clickhouse;
+use Elastica\Query\BoolQuery;
+use Elastica\Query\MatchQuery;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -85,19 +87,31 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/elastic/search/{search}", name="elastic_search")
+     * @Route("/elastic/search/{title}/{address}", name="elastic_search")
      *
-     * @param string $search
+     * @param string $title
+     * @param string $address
      *
      * @return Response
      */
-    public function elasticSearch(string $search): Response
+    public function elasticSearch(string $title, string $address): Response
     {
         $results = [
             'contracts' => [],
             'tariffs' => [],
         ];
-        $contracts = $this->contractFinder->find($search);
+
+        $boolQuery = new BoolQuery();
+
+        $query = new MatchQuery();
+        $query->setField('fullName', $title);
+        $boolQuery->addMust($query);
+
+        $query = new MatchQuery();
+        $query->setField('address', $address);
+        $boolQuery->addMust($query);
+
+        $contracts = $this->contractFinder->find($boolQuery, 20);
         /** @var Contract $contract */
         foreach ($contracts as $contract) {
             $results['contracts'][$contract->getProviderId()] = [
@@ -106,7 +120,7 @@ class TestController extends AbstractController
             ];
         }
 
-        $tariffs = $this->tariffFinder->find($search, 5);
+        $tariffs = $this->tariffFinder->find($title, 5);
         /** @var Tariff $tariff */
         foreach ($tariffs as $tariff) {
             $results['tariffs'][$tariff->getProviderId()] = [
