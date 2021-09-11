@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Contract;
 use App\Entity\Tariff;
 use App\Services\BGBilling;
-use App\Services\Clickhouse;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\MatchQuery;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
@@ -14,9 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/test", name="test_")
+ * @Route("/elastic", name="elastic_")
  */
-class TestController extends AbstractController
+class ElasticController extends AbstractController
 {
     /** @var TransformedFinder */
     private $contractFinder;
@@ -30,36 +29,13 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/", name="index")
-     */
-    public function index(): Response
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/TestController.php',
-        ]);
-    }
-
-    /**
-     * @Route("/clickhouse", name="clickhouse")
-     *
-     * @param Clickhouse $clickhouse
-     *
-     * @return Response
-     */
-    public function clickhouse(Clickhouse $clickhouse): Response
-    {
-        return $this->json($clickhouse->showDatabases());
-    }
-
-    /**
      * @Route("/billing/items/store", name="billing_items_store")
      *
      * @param BGBilling $billing
      *
      * @return Response
      */
-    public function billing(BGBilling $billing): Response
+    public function store(BGBilling $billing): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
 
@@ -87,14 +63,14 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/elastic/search/{title}/{address}", name="elastic_search")
+     * @Route("/search/{title}/{address}", name="search")
      *
      * @param string $title
      * @param string $address
      *
      * @return Response
      */
-    public function elasticSearch(string $title, string $address): Response
+    public function search(string $title, string $address): Response
     {
         $results = [
             'contracts' => [],

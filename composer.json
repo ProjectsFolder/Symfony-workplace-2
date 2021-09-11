@@ -11,6 +11,7 @@
         "doctrine/doctrine-bundle": "^2.4",
         "doctrine/doctrine-migrations-bundle": "^3.1",
         "doctrine/orm": "^2.9",
+        "enqueue/amqp-lib": "^0.10.4",
         "friendsofdoctrine/dbal-clickhouse": "^1.5",
         "friendsofsymfony/elastica-bundle": "^5.2",
         "symfony/console": "5.3.*",
