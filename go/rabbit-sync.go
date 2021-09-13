@@ -1,34 +1,52 @@
 package main
 
 import (
+    "encoding/json"
     "errors"
+    "fmt"
     uuid "github.com/nu7hatch/gouuid"
     mq "github.com/streadway/amqp"
     "io/ioutil"
     "log"
     "net/http"
+    "os"
     "strings"
 )
 
+type Configuration struct {
+    RabbitUrl string
+    CallbackUrl string
+}
+
 func main() {
-    addr := "amqp://guest:guest@localhost:5672/"
-    rabbit := NewRabbit(addr)
+    file, _ := os.Open("config.json")
+    decoder := json.NewDecoder(file)
+    configuration := Configuration{}
+    if err := decoder.Decode(&configuration); err != nil {
+        fmt.Println("Cannot read configuration:", err)
+    }
+    if err := file.Close(); err != nil {
+        log.Println("Unable to close file", err)
+    }
+
+    rabbit := NewRabbit(configuration.RabbitUrl)
     if err := rabbit.Connect(); err != nil {
         log.Fatalln("unable to connect to rabbit", err)
     }
 
     u, err := uuid.NewV4()
     qName := u.String()
-    consumerConfig := ConsumerConfig{
+    consumerConfig := ConsumerConfig {
         ExchangeName: "test_topic.v1",
         ExchangeType: "fanout",
         RoutingKey:   "",
         QueueName:    qName,
+        CallbackUrl:  configuration.CallbackUrl,
     }
     consumer := NewConsumer(consumerConfig, rabbit)
     messages, err := consumer.Start();
     if err != nil {
-        log.Fatalln("unable to start consumer", err)
+        log.Fatalln("Unable to start consumer", err)
     }
 
     log.Println("[", qName, "] Running ...")
@@ -53,7 +71,7 @@ func main() {
         if err != nil {
             log.Println("Unable to read response", err)
         }
-        log.Println("Callback-response:", string(bytes))
+        log.Println("[", qName, "] Callback-response:", string(bytes))
         if err := resp.Body.Close(); err != nil {
             log.Println("Unable to close response", err)
         }
@@ -111,10 +129,11 @@ func (r *Rabbit) Channel() (*mq.Channel, error) {
 // CONSUMER
 
 type ConsumerConfig struct {
-    ExchangeName  string
-    ExchangeType  string
-    RoutingKey    string
-    QueueName     string
+    ExchangeName string
+    ExchangeType string
+    RoutingKey   string
+    QueueName    string
+    CallbackUrl  string
 }
 
 type Consumer struct {
