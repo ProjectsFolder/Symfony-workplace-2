@@ -1,31 +1,28 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
     uuid "github.com/nu7hatch/gouuid"
+    "gopkg.in/yaml.v2"
     "io/ioutil"
     "log"
     "net/http"
-    "os"
     "rabbit-sync/internal"
     "strings"
 )
 
 type Configuration struct {
-    RabbitUrl string
-    CallbackUrl string
+    RabbitUrl string `yaml:"rabbit_url"`
+    CallbackUrl string `yaml:"callback_url"`
 }
 
 func main() {
-    file, _ := os.Open("config.json")
-    decoder := json.NewDecoder(file)
-    configuration := Configuration{}
-    if err := decoder.Decode(&configuration); err != nil {
-        fmt.Println("Cannot read configuration:", err)
+    file, err := ioutil.ReadFile("./config/config.yaml")
+    if err != nil {
+        log.Println("Cannot read configuration:", err)
     }
-    if err := file.Close(); err != nil {
-        log.Println("Unable to close file", err)
+    configuration := Configuration{}
+    if err = yaml.Unmarshal(file, &configuration); err != nil {
+        log.Fatal("Cannot unmarshal config.yaml", err.Error())
     }
 
     rabbit := internal.NewRabbit(configuration.RabbitUrl)

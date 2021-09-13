@@ -1,4 +1,4 @@
 ###> project-files ###
 /.idea
-/config.json
+/config/config.yaml
 ###< project-files ###
