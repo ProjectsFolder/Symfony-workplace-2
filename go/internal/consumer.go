@@ -10,7 +10,6 @@ type ConsumerConfig struct {
 	ExchangeType string
 	RoutingKey   string
 	QueueName    string
-	CallbackUrl  string
 }
 
 type Consumer struct {

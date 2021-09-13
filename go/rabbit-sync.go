@@ -40,7 +40,6 @@ func main() {
         ExchangeType: "fanout",
         RoutingKey:   "",
         QueueName:    qName,
-        CallbackUrl:  configuration.CallbackUrl,
     }
     consumer := internal.NewConsumer(consumerConfig, rabbit)
     messages, err := consumer.Start()
@@ -56,7 +55,7 @@ func main() {
         reader := strings.NewReader(message)
         log.Println("[", qName, "] Consumed:", message)
 
-        req, err := http.NewRequest("POST", "http://127.0.0.1:8003/rabbit/callback", reader)
+        req, err := http.NewRequest("POST", configuration.CallbackUrl, reader)
         if err != nil {
             log.Println("Unable to create request", err)
         }
