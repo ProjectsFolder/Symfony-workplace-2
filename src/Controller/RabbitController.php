@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Services\RabbitMQ;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -41,5 +42,24 @@ class RabbitController extends AbstractController
         $message = $this->rabbit->receive('test_topic.v1');
 
         return $this->json($message);
+    }
+
+    /**
+     * @Route("/callback", name="_get", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function callbackMessage(Request $request): Response
+    {
+        $content = json_decode($request->getContent(), true);
+        $content['from'] = 'Symfony!';
+        $data = [
+            'success' => true,
+            'data' => $content,
+        ];
+
+        return $this->json($data);
     }
 }

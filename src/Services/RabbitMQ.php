@@ -27,7 +27,7 @@ class RabbitMQ
         $producer->send($endpoint, $this->context->createMessage(json_encode($message)));
     }
 
-    public function receive(string $exchangeName)
+    public function receive(string $exchangeName): bool
     {
         $queue = $this->context->createQueue(uniqid());
         $queue->setFlags(AmqpQueue::FLAG_IFUNUSED | AmqpQueue::FLAG_AUTODELETE | AmqpQueue::FLAG_EXCLUSIVE);
