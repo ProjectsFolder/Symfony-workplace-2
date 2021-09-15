@@ -21,7 +21,7 @@ class RabbitController extends AbstractController
     }
 
     /**
-     * @Route("/set", name="_set")
+     * @Route("/set", name="set")
      *
      * @return Response
      */
@@ -33,7 +33,7 @@ class RabbitController extends AbstractController
     }
 
     /**
-     * @Route("/get", name="_get")
+     * @Route("/get", name="get")
      *
      * @return Response
      */
@@ -45,7 +45,7 @@ class RabbitController extends AbstractController
     }
 
     /**
-     * @Route("/callback", name="_get", methods={"POST"})
+     * @Route("/callback", name="callback", methods={"POST"})
      *
      * @param Request $request
      *
