@@ -47,10 +47,16 @@ func main() {
     log.Println("[", qName, "] Running ...")
     log.Println("[", qName, "] Press CTRL+C to exit ...")
 
+    ws := internal.NewWebSocket("/ws")
+    ws.CreateHandler()
+    go http.ListenAndServe(":8080", nil)
+
     for msg := range messages {
         message := string(msg.Body)
         reader := strings.NewReader(message)
         log.Println("[", qName, "] Consumed:", message)
+
+        ws.NotifyAll(1, []byte(message))
 
         req, err := http.NewRequest("POST", configuration.CallbackUrl, reader)
         if err != nil {
