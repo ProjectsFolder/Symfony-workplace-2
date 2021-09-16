@@ -2,7 +2,6 @@ package main
 
 import (
     uuid "github.com/nu7hatch/gouuid"
-    "gopkg.in/yaml.v2"
     "io/ioutil"
     "log"
     "net/http"
@@ -10,20 +9,8 @@ import (
     "strings"
 )
 
-type Configuration struct {
-    RabbitUrl string `yaml:"rabbit_url"`
-    CallbackUrl string `yaml:"callback_url"`
-}
-
 func main() {
-    file, err := ioutil.ReadFile("./config/config.yaml")
-    if err != nil {
-        log.Println("Cannot read configuration:", err)
-    }
-    configuration := Configuration{}
-    if err = yaml.Unmarshal(file, &configuration); err != nil {
-        log.Fatal("Cannot unmarshal config.yaml", err.Error())
-    }
+    configuration := internal.GetConfig()
 
     rabbit := internal.NewRabbit(configuration.RabbitUrl)
     if err := rabbit.Connect(); err != nil {
@@ -47,7 +34,7 @@ func main() {
     log.Println("[", qName, "] Running ...")
     log.Println("[", qName, "] Press CTRL+C to exit ...")
 
-    ws := internal.NewWebSocket("/ws")
+    ws := internal.NewWebSocket("/ws", true)
     ws.CreateHandler()
     go http.ListenAndServe(":8080", nil)
 

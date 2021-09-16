@@ -7,10 +7,12 @@ import (
 )
 
 type WebSocket struct {
+    secure bool
     pattern string
     receiver func(ws *WebSocket, msgType int, msg []byte)
     clients map[*websocket.Conn] *WebSocketClient
     notifyAll chan *WebSocketMessage
+    config *Configuration
 }
 
 type WebSocketMessage struct {
@@ -21,18 +23,22 @@ type WebSocketMessage struct {
 type WebSocketClient struct {
     connection *websocket.Conn
     sender chan *WebSocketMessage
+    auth string
 }
 
-func NewWebSocket(pattern string) *WebSocket {
+func NewWebSocket(pattern string, secure bool) *WebSocket {
     return &WebSocket{
+        secure: secure,
         pattern: pattern,
         clients: make(map[*websocket.Conn] *WebSocketClient),
         notifyAll: make(chan *WebSocketMessage),
+        config: GetConfig(),
     }
 }
 
 func (ws *WebSocket) CreateHandler() {
     http.HandleFunc(ws.pattern, func(w http.ResponseWriter, r *http.Request) {
+        auth := r.URL.Query().Get("auth")
         upgrader := websocket.Upgrader {
             ReadBufferSize:  1024,
             WriteBufferSize: 1024,
@@ -47,15 +53,21 @@ func (ws *WebSocket) CreateHandler() {
         client := &WebSocketClient{
             connection: conn,
             sender: make(chan *WebSocketMessage),
+            auth: auth,
         }
         ws.clients[conn] = client
 
         for {
-            msgType, msg, err := conn.ReadMessage()
+            msgType, msg, err := client.connection.ReadMessage()
             if err != nil {
                 log.Println("Cannot read message:", err)
                 delete(ws.clients, client.connection)
                 return
+            }
+
+            if ws.secure && !ws.CheckAuth(client) {
+                delete(ws.clients, client.connection)
+                continue
             }
 
             if ws.receiver != nil {
@@ -67,9 +79,13 @@ func (ws *WebSocket) CreateHandler() {
     go func(ws *WebSocket) {
         for {
             message := <- ws.notifyAll
-            for connection := range ws.clients {
-                err := connection.WriteMessage(message.msgType, message.msg)
-                if err != nil {
+            for connection, client := range ws.clients {
+                if ws.secure && !ws.CheckAuth(client) {
+                    delete(ws.clients, connection)
+                    continue
+                }
+
+                if err := connection.WriteMessage(message.msgType, message.msg); err != nil {
                     log.Println("Cannot send message to ws:", err)
                     delete(ws.clients, connection)
                 } else {
@@ -93,4 +109,29 @@ func (ws *WebSocket) NotifyAll(msgType int, msg []byte) {
 
 func (ws *WebSocket) GetClients() map[*websocket.Conn]*WebSocketClient {
     return ws.clients
+}
+
+func (ws *WebSocket) CheckAuth(client *WebSocketClient) bool {
+    req, err := http.NewRequest("GET", ws.config.AuthUrl, nil)
+    if err != nil {
+        log.Println("Unable to create request", err)
+    }
+
+    cookie := http.Cookie{
+        Name:  "PHPSESSID",
+        Value: client.auth,
+        Path:  "/",
+    }
+    req.AddCookie(&cookie)
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        log.Println("Unable to auth ws", err)
+        return false
+    }
+    if resp.StatusCode != 200 {
+        log.Println("Unable to auth ws", resp.Status)
+        return false
+    }
+
+    return true
 }
