@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/ws", name="ws_")
  */
-class WSController extends AbstractController
+class WebSocketController extends AbstractController
 {
     /**
      * @Route("/", name="index", methods={"GET"})

@@ -43,3 +43,6 @@ services:
             - '@doctrine.dbal.bgbilling_connection'
 
     App\Services\BGBilling: '@billing.service'
+
+    App\Security\UserAuthenticator:
+        $userProvider: '@security.user.provider.concrete.backend_users'
