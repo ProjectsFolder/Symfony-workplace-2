@@ -1,16 +1,16 @@
 package main
 
 import (
-	"net/http"
-	"rabbit-sync/internal"
+    "net/http"
+    "rabbit-sync/internal"
 )
 
 func main() {
-	ws := internal.NewWebSocket("/ws")
-	ws.CreateHandler()
-	ws.SetReceiver(func(ws *internal.WebSocket, msgType int, msg []byte) {
-		ws.NotifyAll(msgType, msg)
-	})
+    ws := internal.NewWebSocket("/ws")
+    ws.CreateHandler()
+    ws.SetReceiver(func(ws *internal.WebSocket, msgType int, msg []byte) {
+        ws.NotifyAll(msgType, msg)
+    })
 
-	_ = http.ListenAndServe(":8080", nil)
+    _ = http.ListenAndServe(":8080", nil)
 }
