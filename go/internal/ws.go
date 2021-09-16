@@ -126,10 +126,12 @@ func (ws *WebSocket) CheckAuth(client *WebSocketClient) bool {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println("Unable to auth ws", err)
+
 		return false
 	}
 	if resp.StatusCode != 200 {
 		log.Println("Unable to auth ws", resp.Status)
+
 		return false
 	}
 
