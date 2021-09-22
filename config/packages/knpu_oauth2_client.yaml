@@ -11,9 +11,9 @@ knpu_oauth2_client:
             redirect_route: keycloak_auth
             redirect_params: {}
             # Keycloak server URL
-            auth_server_url: http://127.0.0.1:8080/auth
+            auth_server_url: '%env(OAUTH_KEYCLOAK_SERVER_URL)%'
             # Keycloak realm
-            realm: CENTRA
+            realm: '%env(OAUTH_KEYCLOAK_REALM)%'
             # Optional: Encryption algorith, i.e. RS256
             # encryption_algorithm: null
             # Optional: Encryption key path, i.e. ../key.pem
