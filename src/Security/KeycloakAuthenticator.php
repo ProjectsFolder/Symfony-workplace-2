@@ -13,9 +13,12 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class KeycloakAuthenticator extends OAuth2Authenticator
 {
+    use TargetPathTrait;
+
     private $client;
     private $router;
     private $userProvider;
@@ -52,7 +55,10 @@ class KeycloakAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $targetUrl = $this->router->generate('keycloak_index');
+        $targetUrl = $this->getTargetPath($request->getSession(), $firewallName);
+        if (empty($targetUrl)) {
+            $targetUrl = $this->router->generate('keycloak_index');
+        }
 
         return new RedirectResponse($targetUrl);
     }

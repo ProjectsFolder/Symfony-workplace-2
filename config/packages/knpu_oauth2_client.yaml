@@ -8,7 +8,7 @@ knpu_oauth2_client:
             client_id: '%env(OAUTH_KEYCLOAK_CLIENT_ID)%'
             client_secret: '%env(OAUTH_KEYCLOAK_CLIENT_SECRET)%'
             # a route name you'll create
-            redirect_route: keycloak_index
+            redirect_route: keycloak_auth
             redirect_params: {}
             # Keycloak server URL
             auth_server_url: http://127.0.0.1:8080/auth
