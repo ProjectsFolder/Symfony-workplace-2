@@ -36,6 +36,7 @@ class KeycloakAuthenticator extends OAuth2Authenticator
     public function supports(Request $request): ?bool
     {
         return
+            'keycloak_auth' == $request->attributes->get('_route') &&
             $request->query->has('state') &&
             $request->query->has('session_state') &&
             $request->query->has('code')
