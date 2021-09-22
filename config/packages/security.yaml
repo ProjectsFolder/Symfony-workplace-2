@@ -10,6 +10,8 @@ security:
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
+        keycloak_user_provider:
+            id: App\Security\KeycloakUserProvider
         backend_users:
             memory:
                 users:
@@ -19,6 +21,14 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        keycloak:
+            pattern: ^/keycloak
+            provider: keycloak_user_provider
+            form_login:
+                login_path: /keycloak/auth
+                check_path: /keycloak/auth
+            custom_authenticators:
+                - App\Security\KeycloakAuthenticator
         main:
             lazy: true
             provider: backend_users
