@@ -21,8 +21,8 @@ func main() {
     qName := u.String()
     consumerConfig := internal.ConsumerConfig {
         ExchangeName: "test_topic.v1",
-        ExchangeType: "fanout",
-        RoutingKey:   "",
+        ExchangeType: "direct",
+        RoutingKey:   configuration.RabbitRoutingKey,
         QueueName:    qName,
     }
     consumer := internal.NewConsumer(consumerConfig, rabbit)

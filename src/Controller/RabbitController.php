@@ -21,25 +21,29 @@ class RabbitController extends AbstractController
     }
 
     /**
-     * @Route("/set", name="set")
+     * @Route("/{key}/set", name="set")
+     *
+     * @param string $key
      *
      * @return Response
      */
-    public function setMessage(): Response
+    public function setMessage(string $key): Response
     {
-        $this->rabbit->public('test_topic.v1', ['message' => 'Hello, Rabbit!']);
+        $this->rabbit->public('test_topic.v1', $key, ['message' => 'Hello, Rabbit!']);
 
         return $this->json('success');
     }
 
     /**
-     * @Route("/get", name="get")
+     * @Route("/{key}/get", name="get")
+     *
+     * @param string $key
      *
      * @return Response
      */
-    public function getMessage(): Response
+    public function getMessage(string $key): Response
     {
-        $message = $this->rabbit->receive('test_topic.v1');
+        $message = $this->rabbit->receive('test_topic.v1', $key);
 
         return $this->json($message);
     }

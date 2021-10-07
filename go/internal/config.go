@@ -11,6 +11,7 @@ type Configuration struct {
     RabbitUrl string `yaml:"rabbit_url"`
     CallbackUrl string `yaml:"callback_url"`
     AuthUrl string `yaml:"auth_url"`
+    RabbitRoutingKey string `yaml:"rabbit_routing_key"`
 }
 
 var (

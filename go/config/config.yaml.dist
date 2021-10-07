@@ -1,3 +1,4 @@
 rabbit_url: "rabbit_url"
 callback_url: "callback_url"
 auth_url: "auth_url"
+rabbit_routing_key: "rabbit_routing_key"
