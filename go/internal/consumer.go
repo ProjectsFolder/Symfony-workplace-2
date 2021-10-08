@@ -51,7 +51,7 @@ func (c *Consumer) Start() (<-chan mq.Delivery, error) {
         c.config.QueueName,
         true,
         true,
-        true,
+        false,
         false,
         nil,
     ); err != nil {

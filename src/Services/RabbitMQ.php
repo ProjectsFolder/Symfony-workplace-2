@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
+use Interop\Amqp\AmqpConsumer;
+use Interop\Amqp\AmqpMessage;
 use Interop\Amqp\AmqpQueue;
 use Interop\Amqp\AmqpTopic;
 use Interop\Amqp\Impl\AmqpBind;
@@ -29,10 +31,10 @@ class RabbitMQ
         $producer->send($endpoint, $message);
     }
 
-    public function receive(string $exchangeName, string $routingKey): ?array
+    public function receive(string $exchangeName, string $routingKey): array
     {
         $queue = $this->context->createQueue(uniqid());
-        $queue->setFlags(AmqpQueue::FLAG_IFUNUSED | AmqpQueue::FLAG_AUTODELETE | AmqpQueue::FLAG_EXCLUSIVE);
+        $queue->setFlags(AmqpQueue::FLAG_DURABLE | AmqpQueue::FLAG_AUTODELETE);
         $this->context->declareQueue($queue);
 
         $endpoint = $this->context->createTopic($exchangeName);
@@ -41,16 +43,22 @@ class RabbitMQ
 
         $this->context->bind(new AmqpBind($endpoint, $queue, $routingKey));
         $consumer = $this->context->createConsumer($queue);
-        $message = $consumer->receive();
-        if (!empty($message)) {
-            $consumer->acknowledge($message);
-            $routingKey = $message->getRoutingKey();
-            $result = json_decode($message->getBody(), true);
-            $result['routing_key'] = $routingKey;
 
-            return $result;
-        }
+        $result = [];
+        $subscriptionConsumer = $this->context->createSubscriptionConsumer();
+        $subscriptionConsumer->subscribe(
+            $consumer,
+            function(AmqpMessage $message, AmqpConsumer $consumer) use (&$result) {
+                $consumer->acknowledge($message);
+                $routingKey = $message->getRoutingKey();
+                $result['message'] = json_decode($message->getBody(), true);
+                $result['routing_key'] = $routingKey;
 
-        return null;
+                return false;
+            }
+        );
+        $subscriptionConsumer->consume();
+
+        return $result;
     }
 }
