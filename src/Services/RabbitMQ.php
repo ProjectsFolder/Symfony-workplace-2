@@ -23,7 +23,7 @@ class RabbitMQ
     public function public(string $exchangeName, string $routingKey, array $message)
     {
         $endpoint = $this->context->createTopic($exchangeName);
-        $endpoint->setType(AmqpTopic::TYPE_DIRECT);
+        $endpoint->setType(AmqpTopic::TYPE_TOPIC);
         $this->context->declareTopic($endpoint);
         $producer = $this->context->createProducer();
         $message = $this->context->createMessage(json_encode($message));
@@ -38,7 +38,7 @@ class RabbitMQ
         $this->context->declareQueue($queue);
 
         $endpoint = $this->context->createTopic($exchangeName);
-        $endpoint->setType(AmqpTopic::TYPE_DIRECT);
+        $endpoint->setType(AmqpTopic::TYPE_TOPIC);
         $this->context->declareTopic($endpoint);
 
         $this->context->bind(new AmqpBind($endpoint, $queue, $routingKey));

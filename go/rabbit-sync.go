@@ -21,7 +21,7 @@ func main() {
     qName := u.String()
     consumerConfig := internal.ConsumerConfig {
         ExchangeName: "test_topic.v1",
-        ExchangeType: "direct",
+        ExchangeType: "topic",
         RoutingKey:   configuration.RabbitRoutingKey,
         QueueName:    qName,
     }
@@ -48,24 +48,29 @@ func main() {
         req, err := http.NewRequest("POST", configuration.CallbackUrl, reader)
         if err != nil {
             log.Println("Unable to create request", err)
+            continue
         }
         req.Header.Set("Accept", "application/json")
         resp, err := http.DefaultClient.Do(req)
         if err != nil {
             log.Println("Unable to call callback", err)
+            continue
         }
 
         bytes, err := ioutil.ReadAll(resp.Body)
         if err != nil {
             log.Println("Unable to read response", err)
+            continue
         }
         log.Println("[", qName, "] Callback-response:", string(bytes))
         if err := resp.Body.Close(); err != nil {
             log.Println("Unable to close response", err)
+            continue
         }
 
         if err := msg.Ack(false); err != nil {
             log.Println("Unable to acknowledge the message, dropped", err)
+            continue
         }
     }
 
