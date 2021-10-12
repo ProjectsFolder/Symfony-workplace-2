@@ -3,8 +3,10 @@
 namespace App\Security;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\InMemoryUserProvider;
@@ -17,10 +19,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 class UserAuthenticator extends AbstractAuthenticator
 {
     private $userProvider;
+    private $urlGenerator;
 
-    public function __construct(InMemoryUserProvider $userProvider)
+    public function __construct(InMemoryUserProvider $userProvider, UrlGeneratorInterface $urlGenerator)
     {
         $this->userProvider = $userProvider;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function supports(Request $request): ?bool
@@ -43,7 +47,7 @@ class UserAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return null;
+        return new RedirectResponse($this->urlGenerator->generate('ws_index'));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
