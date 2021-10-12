@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class WebSocketController extends AbstractController
 {
     /**
-     * @Route("/", name="index", methods={"GET"})
+     * @Route("/index", name="index", methods={"GET"})
      *
      * @param Request $request
      *
@@ -25,5 +25,15 @@ class WebSocketController extends AbstractController
             'ws/index.html.twig',
             ['cookie' => $request->cookies->get('PHPSESSID')]
         );
+    }
+
+    /**
+     * @Route("/check/auth", name="check_auth", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function checkAuth(): Response
+    {
+        return new Response();
     }
 }
