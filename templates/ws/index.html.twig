@@ -10,7 +10,7 @@
 
 {% block javascripts %}
     <script type="application/javascript">
-        const socket = new WebSocket("ws://localhost:8080/ws?auth={{ cookie }}");
+        const socket = new WebSocket("{{ websocket_url }}?auth={{ cookie }}");
 
         socket.onopen = function () {
             const output = document.getElementById("output");

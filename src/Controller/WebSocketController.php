@@ -23,7 +23,10 @@ class WebSocketController extends AbstractController
     {
         return $this->render(
             'ws/index.html.twig',
-            ['cookie' => $request->cookies->get('PHPSESSID')]
+            [
+                'websocket_url' => $this->getParameter('websocket_url'),
+                'cookie' => $request->cookies->get('PHPSESSID'),
+            ]
         );
     }
 }
