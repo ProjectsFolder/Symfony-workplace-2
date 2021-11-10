@@ -7,6 +7,7 @@ parameters:
     rabbit_mq_url: '%env(RABBIT_MQ_URL)%'
     elastica_url: '%env(ELASTICSEARCH_URL)%'
     websocket_url: '%env(WEBSOCKET_URL)%'
+    grpc_host: '%env(GRPC_HOST)%'
 
 services:
     # default configuration for services in *this* file

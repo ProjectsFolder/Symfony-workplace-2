@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "github.com/example/path/gen;gen";
+
+package testservice;
+
+service TestService {
+    rpc Do(Request) returns (Response) {}
+}
+
+message Request {
+    string name = 1;
+}
+
+message Response {
+    string message = 1;
+}

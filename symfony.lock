@@ -121,6 +121,12 @@
             "./config/packages/fos_elastica.yaml"
         ]
     },
+    "google/protobuf": {
+        "version": "v3.19.1"
+    },
+    "grpc/grpc": {
+        "version": "1.39.0"
+    },
     "guzzlehttp/guzzle": {
         "version": "7.3.0"
     },
