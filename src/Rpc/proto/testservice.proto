@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-option go_package = "github.com/example/path/gen;gen";
-
 package testservice;
 
 service TestService {
@@ -10,6 +8,7 @@ service TestService {
 
 message Request {
     string name = 1;
+    bool beautiful = 2;
 }
 
 message Response {

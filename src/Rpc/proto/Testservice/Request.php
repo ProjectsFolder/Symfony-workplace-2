@@ -17,6 +17,10 @@ class Request extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string name = 1;</code>
      */
     protected $name = '';
+    /**
+     * Generated from protobuf field <code>bool beautiful = 2;</code>
+     */
+    protected $beautiful = false;
 
     /**
      * Constructor.
@@ -25,6 +29,7 @@ class Request extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $name
+     *     @type bool $beautiful
      * }
      */
     public function __construct($data = NULL) {
@@ -50,6 +55,28 @@ class Request extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->name = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>bool beautiful = 2;</code>
+     * @return bool
+     */
+    public function getBeautiful()
+    {
+        return $this->beautiful;
+    }
+
+    /**
+     * Generated from protobuf field <code>bool beautiful = 2;</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setBeautiful($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->beautiful = $var;
 
         return $this;
     }
