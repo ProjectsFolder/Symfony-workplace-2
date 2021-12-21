@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Throwable;
 
-class ApiEventSubscriber implements EventSubscriberInterface
+class TokenAuthEventSubscriber implements EventSubscriberInterface
 {
     private $apiToken;
     private $systemUtils;
