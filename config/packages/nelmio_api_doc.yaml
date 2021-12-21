@@ -1,0 +1,19 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Symfony-workplace-2
+            description: Test app
+            version: 1.0.0
+        components:
+            securitySchemes:
+                apiKey:
+                    type: apiKey
+                    description: Security token
+                    name: token
+                    in: query
+        security:
+            - apiKey: []
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc) # Accepts routes under /api except /api/doc
+            - ^/grpc

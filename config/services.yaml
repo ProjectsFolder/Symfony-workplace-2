@@ -9,6 +9,8 @@ parameters:
     websocket_url: '%env(WEBSOCKET_URL)%'
     grpc_host: '%env(GRPC_HOST)%'
 
+    app_api_token: '%env(APP_API_KEY)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:

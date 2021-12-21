@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Annotations\TokenAuthenticated;
 use Grpc\ChannelCredentials;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,7 @@ use Testservice\TestServiceClient;
 
 /**
  * @Route("/grpc", name="grpc_")
+ * @TokenAuthenticated
  */
 class GrpcController extends AbstractController
 {
@@ -34,6 +36,6 @@ class GrpcController extends AbstractController
         sleep(5);
         list($reply, $status) = $response->wait();
 
-        return $this->json(0 == $status->code ? $reply->getMessage() : false);
+        return $this->json(0 == $status->code ? $reply->getMessage() : $status->details ?? 'false');
     }
 }
